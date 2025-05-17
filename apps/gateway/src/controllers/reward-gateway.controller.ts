@@ -19,7 +19,6 @@ export class RewardGatewayController {
   @Roles(0)
   async createEvent(@Body() body, @Req() req) {
     const token = req.headers['authorization'];
-    console.log('token', this.baseUrl);
     
     const res = await lastValueFrom(
       this.http.post(`${this.baseUrl}/rewards`, body, {
