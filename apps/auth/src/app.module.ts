@@ -8,6 +8,7 @@ import { AuthModule } from './auth.module'; // 인증 관련 모듈
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,  // 전역 환경변수 모듈 설정
+      envFilePath: 'apps/auth/.env',  // 환경변수 파일 경로
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI), // 환경변수로부터 MongoDB 연결 URI
     AuthModule,  // 인증 관련 모듈

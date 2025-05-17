@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface User extends Document {
+export interface User {
   role: number;
   user_id: string;
   user_password: string;
@@ -12,3 +12,5 @@ export interface User extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type UserDocument = User & Document;

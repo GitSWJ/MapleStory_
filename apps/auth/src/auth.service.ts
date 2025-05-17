@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './user/dto/login.dto';
 import { UserService } from './user/user.service';
+import { CreateUserDto } from './user/dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -10,9 +12,21 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  async create(registerDto: CreateUserDto) {
+    const user = await this.userService.create(registerDto);
+    return {
+      message: 'User registered successfully',
+      user: {
+        user_id: user.user_id,
+        name: user.user_name,
+        role: user.role,
+      },
+    };
+  }
+
   async validateUser(user_id: string, user_password: string) {
     const user = await this.userService.findByUserId(user_id);
-    if (user && user.user_password === user_password) { // 실제로는 해시 비교 필요
+    if (user && await bcrypt.compare(user_password, user.user_password)) {
       const { user_password, ...result } = user;
       return result;
     }
@@ -29,4 +43,6 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  
 }

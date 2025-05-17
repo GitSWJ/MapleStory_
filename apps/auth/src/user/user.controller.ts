@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Public } from '../../../gateway/decorators/public.decorator';
+import { Public } from '../decorators/public.decorator';
 
 @Controller('users')
 export class UserController {
@@ -19,8 +19,7 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Body('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return await this.userService.findOne(id);
   }
- 
 }

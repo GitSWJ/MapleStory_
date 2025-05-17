@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "npm run build:all",
-    "build:all": "nest build auth && nest build event && nest build gateway && nest build nestjs-microservices",
+    "build:all": "nest build auth && nest build event && nest build gateway",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -18,12 +18,16 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/nestjs-microservices/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/nestjs-microservices/test/jest-e2e.json",
+    "start:dev:auth": "ts-node-dev --respawn --transpile-only apps/auth/src/main.ts",
+    "start:dev:gateway": "ts-node-dev --respawn --transpile-only apps/gateway/src/main.ts",
+    "start:dev:event": "ts-node-dev --respawn --transpile-only apps/event/src/main.ts"
   },
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
+    "@nestjs/axios": "^4.0.0",
+    "@nestjs/common": "^10.4.17",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^10.0.0",
+    "@nestjs/core": "^10.4.17",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/passport": "^11.0.5",
@@ -36,7 +40,7 @@
     "mongoose": "^8.15.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -60,6 +64,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },

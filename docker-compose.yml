@@ -1,45 +1,52 @@
-
 services:
-  gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: node dist/apps/gateway/main.js
-    ports:
-      - "3000:3000"
-    depends_on:
-      - auth
-      - event
-    env_file:
-      - apps/gateway/.env
-
   auth:
     build:
       context: .
       dockerfile: Dockerfile
-    command: node dist/apps/auth/main.js
+    command: npm run start:dev:auth
     ports:
       - "3001:3001"
-    depends_on:
-      - mongodb
+    volumes:
+      - .:/apps
+      - /apps/node_modules
     env_file:
       - apps/auth/.env
+    depends_on:
+      - mongodb
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run start:dev:gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/apps
+      - /apps/node_modules
+    env_file:
+      - apps/gateway/.env
+    depends_on:
+      - auth
+      - event
 
   event:
     build:
       context: .
       dockerfile: Dockerfile
-    command: node dist/apps/event/main.js
+    command: npm run start:dev:event
     ports:
       - "3002:3002"
-    depends_on:
-      - mongodb
+    volumes:
+      - .:/apps
+      - /apps/node_modules
     env_file:
       - apps/event/.env
+    depends_on:
+      - mongodb
 
   mongodb:
     image: mongo:6
-    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
