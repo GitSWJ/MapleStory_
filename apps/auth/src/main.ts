@@ -12,7 +12,6 @@ async function bootstrap() {
     transform: true,
   }));
 
-  // 포트 설정 (기본값 3000)
   await app.listen(3001);
   console.log(`Auth service is running on: ${await app.getUrl()}`);
 }

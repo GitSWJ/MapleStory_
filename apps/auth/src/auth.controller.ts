@@ -1,6 +1,7 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from './user/user.service';
+import { LoginDto } from './user/dto/login.dto';
 import * as bcrypt from 'bcrypt';
 
 @Controller('auth')
@@ -19,13 +20,10 @@ export class AuthController {
       throw new UnauthorizedException('User ID already exists');
     }
 
-    // 비밀번호 해시 생성
-    const hashedPassword = await bcrypt.hash(body.user_password, 10);
-
     // 사용자 생성
     const user = await this.userService.create({
       user_id: body.user_id,
-      user_password: hashedPassword,
+      user_password: body.user_password,
       user_name: body.user_name,
       role: 1, // 기본 권한 등 필요에 따라 추가
     });
@@ -35,12 +33,19 @@ export class AuthController {
 
   // 로그인
   @Post('login')
-  async login(@Body() body: { user_id: string; user_password: string }) {
+  async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(body.user_id, body.user_password);
+
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     return this.authService.login(user);
   }
+
+  @Get('test')
+  test() {
+    return { message: 'Auth service is running' };
+  }
+
 }

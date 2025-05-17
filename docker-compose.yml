@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     command: node dist/apps/gateway/main.js
     ports:
-      - "8080:3000"
+      - "3000:3000"
     depends_on:
       - auth
       - event
@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile
     command: node dist/apps/auth/main.js
     ports:
-      - "8081:3001"
+      - "3001:3001"
     depends_on:
       - mongodb
     env_file:
@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
     command: node dist/apps/event/main.js
     ports:
-      - "8082:3002"
+      - "3002:3002"
     depends_on:
       - mongodb
     env_file:
