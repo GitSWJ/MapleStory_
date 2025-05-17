@@ -1,4 +1,4 @@
-.env 환경 세팅
+.env 파일 세팅
 
 # 도커 환경(auth)
 MONGODB_URI=mongodb://mongodb:27017/auth
@@ -29,3 +29,6 @@ EVENT_SERVICE_URL=http://localhost:3002
 MONGODB_URI=mongodb://localhost:27017/gateway
 AUTH_SERVICE_URL=http://localhost:3001/auth 
 EVENT_SERVICE_URL=http://localhost:3002
+
+
+docker compose up --build
