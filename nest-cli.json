@@ -4,7 +4,7 @@
   "sourceRoot": "apps/nestjs-microservices/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true,
+    "webpack": false,
     "tsConfigPath": "apps/nestjs-microservices/tsconfig.app.json"
   },
   "monorepo": true,

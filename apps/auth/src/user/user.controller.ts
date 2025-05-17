@@ -22,5 +22,5 @@ export class UserController {
   async findOne(@Body('id') id: string) {
     return await this.userService.findOne(id);
   }
-  
+ 
 }
