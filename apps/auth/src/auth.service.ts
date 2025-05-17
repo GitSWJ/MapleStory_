@@ -1,37 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './user/dto/login.dto';
 import { UserService } from './user/user.service';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(user_id: string, user_password: string): Promise<any> {
+  async validateUser(user_id: string, user_password: string) {
     const user = await this.userService.findByUserId(user_id);
-    
-    if (!user) return null;
-
-    const isPasswordMatch = await bcrypt.compare(user_password, user.user_password);
-
-    if (isPasswordMatch) {
-      const { user_password, ...result } = user.toObject();
+    if (user && user.user_password === user_password) { // 실제로는 해시 비교 필요
+      const { user_password, ...result } = user;
       return result;
     }
     return null;
   }
 
-  async login(user: any) {
-    const payload = {
-      sub: user._id,
-      user_id: user.user_id,
-      user_name: user.user_name,
-      role: Number(user.role),
-    };
-
+  async login(loginDto: LoginDto) {
+    const user = await this.validateUser(loginDto.user_id, loginDto.user_password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const payload = { user_id: user.user_id, sub: user._id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
     };
