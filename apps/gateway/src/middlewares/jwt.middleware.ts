@@ -1,21 +1,25 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import * as jwt from 'jsonwebtoken';
+import { AuthTokenService } from '../services/auth-token.service';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    const token = req.headers['authorization']?.replace('Bearer ', '');
+  constructor(private readonly authTokenService: AuthTokenService) {}
+
+  async use(req: Request, res: Response, next: NextFunction) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.split(' ')[1];
+
     if (!token) {
-      throw new UnauthorizedException('Token missing');
+      return res.status(401).json({ message: 'JWT 토큰이 필요합니다.' });
     }
 
     try {
-      const decoded = jwt.verify(token, 'your_jwt_secret');
-      req['user'] = decoded;
+      const user = await this.authTokenService.verifyToken(token);
+      req['user'] = user;
       next();
     } catch (err) {
-      throw new UnauthorizedException('Token invalid');
+      return res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
     }
   }
 }
