@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:3000"
+    command: node dist/apps/gateway/main.js
+    depends_on:
+      - auth
+      - event
+
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:3001"
+    command: node dist/apps/auth/main.js
+
+  event:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8082:3002"
+    command: node dist/apps/event/main.js
