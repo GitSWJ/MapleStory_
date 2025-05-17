@@ -2,7 +2,7 @@ import { Controller, Post, Get, Param, Body } from '@nestjs/common';
 import { EventRuleService } from '../services/event-rule.service';
 import { CreateEventRuleDto } from '../dtos/create-event-rule.dto';
 
-@Controller('event-rules')
+@Controller('rules')
 export class EventRuleController {
   constructor(private readonly eventRuleService: EventRuleService) {}
 

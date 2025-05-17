@@ -10,7 +10,7 @@ import {
 
 export class CreateUserDto {
   @IsInt()
-  role: number;
+  role: Number;
 
   @IsString()
   @IsNotEmpty()

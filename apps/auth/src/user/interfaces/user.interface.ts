@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 
 export interface User {
-  role: number;
+  role: Number;
   user_id: string;
   user_password: string;
   user_name?: string;

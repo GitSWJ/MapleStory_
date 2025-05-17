@@ -3,13 +3,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from './user/user.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     UserModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your_jwt_secret_key',
-      signOptions: { expiresIn: '1h' },
+    ConfigModule, // ConfigService를 쓰려면 import 해야 함
+    JwtModule.registerAsync({
+      imports: [ConfigModule], // ConfigService를 DI로 쓰기 위해
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: "zyUWRbavQ8",
+        signOptions: { expiresIn: '1h' },
+      }),
     }),
   ],
   controllers: [AuthController],

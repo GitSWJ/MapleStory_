@@ -1,5 +1,6 @@
 services:
   auth:
+    container_name: auth
     build:
       context: .
       dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
       - mongodb
 
   gateway:
+    container_name: gateway
     build:
       context: .
       dockerfile: Dockerfile
@@ -31,6 +33,7 @@ services:
       - event
 
   event:
+    container_name: event
     build:
       context: .
       dockerfile: Dockerfile
@@ -46,6 +49,7 @@ services:
       - mongodb
 
   mongodb:
+    container_name: mongodb
     image: mongo:6
     ports:
       - "27017:27017"

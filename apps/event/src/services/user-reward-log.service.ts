@@ -2,8 +2,8 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateUserRewardLogDto } from '../dtos/create-user-reward-log.dto';
-import { UserEventStateService } from '../services/user-event-state.service';
-import { EventRuleService } from '../services/event-rule.service';
+import { UserEventStateService } from './user-event-state.service';
+import { EventRuleService } from './event-rule.service';
 
 @Injectable()
 export class UserRewardLogService {
@@ -24,7 +24,7 @@ export class UserRewardLogService {
     });
 
     if (alreadyClaimed) {
-      throw new BadRequestException('이미 수령한 보상입니다.');
+      return { message: '이미 수령한 보상입니다.' };
     }
 
     // 유저 이벤트 상태 조회
@@ -34,30 +34,33 @@ export class UserRewardLogService {
     });
 
     if (!userEventState) {
-      throw new BadRequestException('이벤트 참여 상태가 없습니다.');
+      return { message: '이벤트 참여 상태가 없습니다.' };
     }
 
     // 이벤트 조건 확인
     const eventRule = await this.eventRuleService.findOne(eventRuleId);
     if (!eventRule) {
-      throw new BadRequestException('이벤트 규칙이 없습니다.');
-    } else if ( eventRule.conditionType === 'attendance') {
+      return { message: '이벤트 규칙이 없습니다.' };
+    }
+
+    if (eventRule.conditionType === 'attendance') {
       if (userEventState.progress < eventRule.conditionParams) {
-        throw new BadRequestException('출석 조건을 충족하지 못했습니다.');
+        return { message: '출석 조건을 충족하지 못했습니다.' };
       }
     } else if (eventRule.conditionType === 'invite') {
       if (userEventState.inviteCount < eventRule.conditionParams) {
-        throw new BadRequestException('초대 조건을 충족하지 못했습니다.');
+        return { message: '초대 조건을 충족하지 못했습니다.' };
       }
     } else if (eventRule.conditionType === 'ranking') {
       if (userEventState.ranking > eventRule.conditionParams) {
-        throw new BadRequestException('랭킹 조건을 충족하지 못했습니다.');
+        return { message: '랭킹 조건을 충족하지 못했습니다.' };
       }
     } else {
       if (userEventState.progress < eventRule.conditionParams) {
-        throw new BadRequestException('조건을 충족하지 못했습니다.');
+        return { message: '조건을 충족하지 못했습니다.' };
       }
     }
+
     // 보상 지급 기록 생성
     const createdLog = await this.userRewardLogModel.create({
       userId: new Types.ObjectId(userId),
@@ -66,9 +69,14 @@ export class UserRewardLogService {
       rewardId: new Types.ObjectId(rewardId),
     });
 
-    
-    return await this.userRewardLogModel.findById(createdLog._id).populate('rewardId').exec();
+    const result = await this.userRewardLogModel
+      .findById(createdLog._id)
+      .populate('rewardId')
+      .exec();
+
+    return result;
   }
+
 
   async getUserRewards(userId: string) {
     return await this.userRewardLogModel.find({

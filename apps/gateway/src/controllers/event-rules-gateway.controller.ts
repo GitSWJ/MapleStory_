@@ -1,13 +1,11 @@
 import { Controller, Post, Body, Req, Get } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
+import { Roles } from '../decorators/roles.decorator';
 import { ConfigService } from '@nestjs/config';
 
-import { Roles } from '../decorators/roles.decorator';
-import { Public } from '../decorators/public.decorator';
-
-@Controller('events')
-export class EventGatewayController {
+@Controller('rules')
+export class EventRulesGatewayController {
   private baseUrl: string;
   constructor(
     private readonly http: HttpService,
@@ -22,7 +20,7 @@ export class EventGatewayController {
     const token = req.headers['authorization'];
 
     const res = await lastValueFrom(
-      this.http.post(`${this.baseUrl}/events`, body, {
+      this.http.post(`${this.baseUrl}/rules`, body, {
         headers: { Authorization: token },
       }),
     );
@@ -31,12 +29,12 @@ export class EventGatewayController {
   }
 
   @Get()
-  @Public()
+  @Roles(0)
   async getAllEvent(@Req() req) {
     const token = req.headers['authorization'];
 
     const res = await lastValueFrom(
-      this.http.get(`${this.baseUrl}/events`, {
+      this.http.get(`${this.baseUrl}/rules`, {
         headers: { Authorization: token },
       }),
     );
